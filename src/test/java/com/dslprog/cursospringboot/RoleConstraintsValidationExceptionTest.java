@@ -1,6 +1,7 @@
 package com.dslprog.cursospringboot;
 
 import com.dslprog.cursospringboot.dto.RoleDto;
+import com.dslprog.cursospringboot.model.Role;
 import com.dslprog.cursospringboot.service.RoleServiceImpl;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -21,15 +22,20 @@ public class RoleConstraintsValidationExceptionTest {
 
     @Test
     public void constraintsValidationExceptionTest(){
-        assertThrows(ConstraintViolationException.class, ()->{roleService.create(new RoleDto(null));});
-        assertThrows(ConstraintViolationException.class, ()->{roleService.create(new RoleDto(""));});
-        assertThrows(ConstraintViolationException.class, ()->{roleService.create(new RoleDto("1234567890123456"));});
+        RoleDto invalidRole = new RoleDto();
+        assertThrows(ConstraintViolationException.class, () -> roleService.create(invalidRole) );
+        invalidRole.setName("");
+        assertThrows(ConstraintViolationException.class, () -> roleService.create(invalidRole) );
+        invalidRole.setName("1234567890123456");
+        assertThrows(ConstraintViolationException.class, () -> roleService.create(invalidRole) );
     }
 
     @Test
     public void shouldCreateRole(){
         String roleName = "ROLE_ADMIN";
-        RoleDto roleDto = roleService.create(new RoleDto(roleName));
+        RoleDto roleDto = new RoleDto();
+        roleDto.setName(roleName);
+        roleDto = roleService.create(roleDto);
         assertEquals(roleDto.getName(), roleName);
         assertNotNull(roleDto.getId());
     }
